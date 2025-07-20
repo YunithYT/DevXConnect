@@ -10,6 +10,8 @@ RUN NODE_OPTIONS=--openssl-legacy-provider npm run build
 # Stage 2: Build the Node.js server and copy the client into it
 FROM node:18-alpine
 WORKDIR /app
+ENV NODE_ENV production
+
 COPY package*.json ./
 RUN npm install
 COPY . .
