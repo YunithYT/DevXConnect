@@ -1,20 +1,20 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
-
-# Install project dependencies
+# Stage 1: Build the React client application
+FROM node:18-alpine AS client-build
+WORKDIR /app/client
+COPY client/package*.json ./
 RUN npm install
+COPY client/ ./
+RUN npm run build
 
-# Copy the rest of your application's source code
+# Stage 2: Build the Node.js server and copy the client into it
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
 COPY . .
+# Copy the built client from the previous stage
+COPY --from=client-build /app/client/build ./client/build
 
-# Make your app's port available to the outside world
-EXPOSE 8080
-
-# Define the command to run your app
+# Expose the port and start the server
+EXPOSE 10000
 CMD [ "node", "server.js" ]
