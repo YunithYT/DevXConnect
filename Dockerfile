@@ -4,7 +4,8 @@ WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
 COPY client/ ./
-RUN npm run build
+RUN NODE_OPTIONS=--openssl-legacy-provider npm run build
+
 
 # Stage 2: Build the Node.js server and copy the client into it
 FROM node:18-alpine
